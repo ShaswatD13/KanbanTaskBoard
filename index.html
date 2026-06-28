@@ -3,9 +3,252 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Kanban Pro - Interactive Task Management Board</title>
+  
+  <meta name="description" content="Kanban Pro is a clean, interactive, and responsive Kanban Task Board built with HTML5, CSS3, Bootstrap 5, and Vanilla JavaScript. Formulated for academic capstone presentation.">
+  <meta name="keywords" content="Kanban, Trello, Task Board, Task Management, Vanilla JS, Bootstrap 5, Capstone Project">
+  <meta name="author" content="Student Name">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNavbar">
+      <div class="container">
+        <a class="navbar-brand navbar-brand-custom" href="#" id="brandLogoLink">
+          <i class="fa-solid fa-square-poll-vertical"></i> KanbanPro
+        </a>
+        <span class="navbar-text text-muted d-none d-sm-inline-block" id="navbarContextInfo">
+          Capstone Dashboard
+        </span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN KANBAN BOARD CONTENT -->
+  <main class="container my-4 flex-grow-1" id="mainContent">
+    
+    <!-- Board Title & Action Header Section -->
+    <div class="project-header d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3" id="headerSection">
+      <div>
+        <h1 class="project-title" id="mainBoardTitle">Project Kanban Board</h1>
+        <p class="project-subtitle mb-0" id="mainBoardSubtitle">Manage tasks, monitor workflows, and boost productivity interactively.</p>
+      </div>
+      <div>
+        <!-- Trigger Modal Button -->
+        <button class="btn btn-primary-custom" id="addTaskButton" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+          <i class="fa-solid fa-plus me-2"></i>Add New Task
+        </button>
+      </div>
+    </div>
+
+    <!-- Kanban Grid Board -->
+    <section class="kanban-board-container" id="taskBoard">
+      <div class="row kanban-row" id="kanbanRow">
+        
+        <!-- COLUMN 1: TO DO -->
+        <div class="col-lg-4 kanban-column-wrapper" id="todoColumnWrapper">
+          <div class="kanban-column" id="todoColumn">
+            <div class="column-header" id="todoColumnHeader">
+              <div class="column-title-container">
+                <span class="column-indicator indicator-todo" id="todoIndicator"></span>
+                <h2 class="column-title" id="todoTitle">To Do</h2>
+              </div>
+              <span class="column-badge" id="todoCount">0</span>
+            </div>
+            <!-- Droppable task area -->
+            <div class="tasks-list-container" id="todoList"
+                 ondragover="onDragOver(event)"
+                 ondragleave="onDragLeave(event)"
+                 ondrop="onDrop(event, 'To Do')">
+              <!-- Cards will be dynamically inserted here via script.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: IN PROGRESS -->
+        <div class="col-lg-4 kanban-column-wrapper" id="inProgressColumnWrapper">
+          <div class="kanban-column" id="inProgressColumn">
+            <div class="column-header" id="inProgressColumnHeader">
+              <div class="column-title-container">
+                <span class="column-indicator indicator-inprogress" id="inprogressIndicator"></span>
+                <h2 class="column-title" id="inprogressTitle">In Progress</h2>
+              </div>
+              <span class="column-badge" id="inProgressCount">0</span>
+            </div>
+            <!-- Droppable task area -->
+            <div class="tasks-list-container" id="inProgressList"
+                 ondragover="onDragOver(event)"
+                 ondragleave="onDragLeave(event)"
+                 ondrop="onDrop(event, 'In Progress')">
+              <!-- Cards will be dynamically inserted here via script.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 3: DONE -->
+        <div class="col-lg-4 kanban-column-wrapper" id="doneColumnWrapper">
+          <div class="kanban-column" id="doneColumn">
+            <div class="column-header" id="doneColumnHeader">
+              <div class="column-title-container">
+                <span class="column-indicator indicator-done" id="doneIndicator"></span>
+                <h2 class="column-title" id="doneTitle">Done</h2>
+              </div>
+              <span class="column-badge" id="doneCount">0</span>
+            </div>
+            <!-- Droppable task area -->
+            <div class="tasks-list-container" id="doneList"
+                 ondragover="onDragOver(event)"
+                 ondragleave="onDragLeave(event)"
+                 ondrop="onDrop(event, 'Done')">
+              <!-- Cards will be dynamically inserted here via script.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-custom" id="mainFooter">
+    <div class="container">
+      <p class="footer-text" id="footerCredits">
+        KanbanPro App &copy; 2026. Made with <i class="fa-solid fa-heart footer-heart"></i> for Capstone Project Showcase.
+      </p>
+    </div>
+  </footer>
+
+  <!-- MODAL: ADD TASK -->
+  <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom">
+          <h5 class="modal-title modal-title-custom" id="addTaskModalLabel">
+            <i class="fa-solid fa-circle-plus text-primary me-2"></i>Create New Task
+          </h5>
+          <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal" aria-label="Close" id="closeAddTaskBtn"></button>
+        </div>
+        <div class="modal-body modal-body-custom">
+          
+          <!-- Alert message for validation errors -->
+          <div class="alert alert-danger" role="alert" id="addTaskAlert" style="display:none;">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>Please fill in all fields correctly.
+          </div>
+
+          <!-- Task Title Input -->
+          <div class="mb-3">
+            <label for="taskTitle" class="form-label form-label-custom">Task Title</label>
+            <input type="text" class="form-control form-control-custom" id="taskTitle" placeholder="Enter task title (e.g. Design mockup)">
+          </div>
+
+          <!-- Task Description Input -->
+          <div class="mb-3">
+            <label for="taskDesc" class="form-label form-label-custom">Description</label>
+            <textarea class="form-control form-control-custom" id="taskDesc" rows="3" placeholder="Provide a brief explanation of this task..."></textarea>
+          </div>
+
+          <!-- Task Priority Selector -->
+          <div class="mb-3">
+            <label for="taskPriority" class="form-label form-label-custom">Priority Level</label>
+            <select class="form-select form-select-custom" id="taskPriority">
+              <option value="" disabled selected>Select priority...</option>
+              <option value="Low">🟢 Low Priority</option>
+              <option value="Medium">🟡 Medium Priority</option>
+              <option value="High">🔴 High Priority</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelAddTaskBtn">Cancel</button>
+          <button type="button" class="btn btn-primary-custom" id="submitAddTaskBtn" onclick="submitAddTask()">Save Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT TASK -->
+  <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom">
+          <h5 class="modal-title modal-title-custom" id="editTaskModalLabel">
+            <i class="fa-solid fa-pen-to-square text-info me-2"></i>Edit Task Details
+          </h5>
+          <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal" aria-label="Close" id="closeEditTaskBtn"></button>
+        </div>
+        <div class="modal-body modal-body-custom">
+          
+          <!-- Alert message for validation errors -->
+          <div class="alert alert-danger" role="alert" id="editTaskAlert" style="display:none;">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>Please fill in all fields correctly.
+          </div>
+
+          <!-- Hidden Input to store the ID of the task being edited -->
+          <input type="hidden" id="editTaskId">
+
+          <!-- Task Title Input -->
+          <div class="mb-3">
+            <label for="editTaskTitle" class="form-label form-label-custom">Task Title</label>
+            <input type="text" class="form-control form-control-custom" id="editTaskTitle" placeholder="Enter task title...">
+          </div>
+
+          <!-- Task Description Input -->
+          <div class="mb-3">
+            <label for="editTaskDesc" class="form-label form-label-custom">Description</label>
+            <textarea class="form-control form-control-custom" id="editTaskDesc" rows="3" placeholder="Provide task description..."></textarea>
+          </div>
+
+          <!-- Task Priority Selector -->
+          <div class="mb-3">
+            <label for="editTaskPriority" class="form-label form-label-custom">Priority Level</label>
+            <select class="form-select form-select-custom" id="editTaskPriority">
+              <option value="Low">🟢 Low Priority</option>
+              <option value="Medium">🟡 Medium Priority</option>
+              <option value="High">🔴 High Priority</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEditTaskBtn">Cancel</button>
+          <button type="button" class="btn btn-primary-custom" id="submitEditTaskBtn" onclick="submitEditTask()">Update Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DELETE CONFIRMATION -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom bg-danger bg-opacity-10">
+          <h5 class="modal-title modal-title-custom text-danger" id="deleteConfirmModalLabel">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>Delete Task?
+          </h5>
+          <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal" aria-label="Close" id="closeDeleteBtn"></button>
+        </div>
+        <div class="modal-body modal-body-custom py-4 text-center">
+          <p class="mb-0" id="deleteWarningText">Are you sure you want to delete this task? This action cannot be undone.</p>
+          <!-- Hidden Input for ID -->
+          <input type="hidden" id="deleteTaskId">
+        </div>
+        <div class="modal-footer modal-footer-custom d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelDeleteBtn">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   
+  <script src="script.js"></script>
 </body>
 </html>
